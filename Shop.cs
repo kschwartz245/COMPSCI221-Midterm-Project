@@ -130,7 +130,7 @@ namespace COMPSCI221_Midterm
             return -1;
         }
 
-        static void AddItemV1(Item[] roster, Item[] inv) // Calls RoomInStore and places empty item in an empty slot
+        static void AddItemV1(Item[] roster, Item[] inv, int gold) // Calls RoomInStore and places empty item in an empty slot
         {
             int pos = RoomInStore(inv);
             if (pos != -1)
@@ -146,7 +146,13 @@ namespace COMPSCI221_Midterm
                 }
                 else
                 {
-                    inv[pos] = roster[choice]; 
+                    if(roster[choice].Price > gold) {
+                        gold = gold - roster[choice].Price;
+                        inv[pos] = roster[choice];
+                        Console.WriteLine("Item Bought");
+                    } else {
+                        Console.WriteLine("Not Enough Gold");
+                    }  
                 }
             }
             else
@@ -155,7 +161,7 @@ namespace COMPSCI221_Midterm
             }
         }
 
-        static void RemoveItemV1(Item[] inv)
+        static void RemoveItemV1(Item[] inv, int gold)
         {
             string input;
             int choice = -1;
@@ -165,7 +171,7 @@ namespace COMPSCI221_Midterm
                 PrintItems(inv);
                 input = Console.ReadLine();
                 bool isValid = int.TryParse(input, out choice);
-                if (!isValid || choice > inv.Length || choice < 0)
+                if (!isValid || choice > inv.Length || choice == 0)
                 {
                     Console.WriteLine("Input not valid! Numbers from List Only");
                 }
@@ -173,7 +179,9 @@ namespace COMPSCI221_Midterm
                 {
                     if (inv[choice-1] != null)
                     {
+                        gold = gold + inv[choice - 1].Price;
                         inv[choice-1] = null;
+                        Console.WriteLine("Item Sold");
                     }
                     else
                     {
@@ -223,10 +231,10 @@ namespace COMPSCI221_Midterm
                             exit = true;
                             break;
                         case (2):// Add Item
-                            AddItemV1(roster, inv);
+                            AddItemV1(roster, inv, gold);
                             break;
                         case (3):// Remove Item
-                            RemoveItemV1(inv);
+                            RemoveItemV1(inv, gold);
                             break;
                         case(4):// Print Items
                             PrintItems(inv);
