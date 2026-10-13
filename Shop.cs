@@ -86,6 +86,22 @@ namespace COMPSCI221_Midterm
             return items;
         }
 
+        static void WriteShopToFile(string path, int gold)
+        {
+            using StreamWriter writer = new StreamWriter(path, false);
+            string line = $"{gold}";
+            writer.WriteLine(line);
+        }
+
+        static void WriteItemsToFile(string path, Item[] inv)
+        {
+            using StreamWriter writer = new StreamWriter(path, false);
+            for (int i = 0;i < inv.Length;i++)
+            {
+                string line = string.Join(",", inv[i].Name, inv[i].Price);
+                writer.WriteLine('\n' + line);
+            }
+        }
         //need readfile and writefile for savedata
         //Gold amount and array of shop parsed in and out of csv file
 
@@ -172,11 +188,15 @@ namespace COMPSCI221_Midterm
         {
             int gold = 200;
             //string for path of items
+            string rosterPath = "Roster.csv";
             //string for path of basic store savedata
+            string storePath = "Store.csv";
             //string for path of item savedata
+            string storeItemsPath = "Inventory.csv";
 
-            //need list of items imported to refer to i.e. ReadItemsFromFile()
-            Item[] roster = new Item[0]; // fake array of items to compile code !!! Replace with Imported Item File Array !!!
+            //need list of items imported to refer to i.e. ReadItemsFromFile()\
+            Item[] roster = new Item[GetLineCount(rosterPath)];
+            roster = ReadItemsFromFile(rosterPath);
             Item[] inv = new Item[20];// Array of Item Objects limited to store capacity
 
 
@@ -212,7 +232,8 @@ namespace COMPSCI221_Midterm
                             PrintItems(inv);
                             break;
                         case(5):// Save Data
-
+                            WriteShopToFile(storePath, gold);
+                            WriteItemsToFile(storeItemsPath, inv);
                             break;
                         case (6):// Load Data
 
