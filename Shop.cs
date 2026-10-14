@@ -12,7 +12,7 @@ namespace COMPSCI221_Midterm
         static void PrintMenu(int gold)
         {
             Console.WriteLine($"Adventure Shop Sim:\nCurrent Gold: {gold}\n");
-            Console.WriteLine("Select an Option:\n1. Exit Program\n2. Add Item\n3. Remove Item\n4. Print Items \n5. Save Data \n6. Load Data");
+            Console.WriteLine("Select an Option:\n1. Exit Program\n2. Add Item\n3. Remove Item\n4. Save Data \n5. Load Data");
         }
 
         static void PrintItems(Item[] arr)
@@ -86,20 +86,23 @@ namespace COMPSCI221_Midterm
             return items;
         }
 
-        static void WriteShopToFile(string path, int gold)
+        static void WriteShopToFile(string path, Store store)
         {
             using StreamWriter writer = new StreamWriter(path, false);
-            string line = $"{gold}";
+            string line = $"{store.GOLDAMOUNT}";
             writer.WriteLine(line);
         }
 
         static void WriteItemsToFile(string path, Item[] inv)
         {
             using StreamWriter writer = new StreamWriter(path, false);
-            for (int i = 0;i < inv.Length;i++)
+            for (int i = 0;i < inv.Length-1;i++)
             {
-                string line = string.Join(",", inv[i].Name, inv[i].Price);
-                writer.WriteLine('\n' + line);
+                if (inv[i] != null)
+                {
+                    string line = string.Join(",", inv[i].Name, inv[i].Price);
+                    writer.WriteLine(line);
+                }
             }
         }
         //need readfile and writefile for savedata
@@ -163,6 +166,7 @@ namespace COMPSCI221_Midterm
                 else
                 {
                     Console.WriteLine("Store is Full!\n");
+                    choice = -1;
                 }
             }
         }
@@ -242,7 +246,7 @@ namespace COMPSCI221_Midterm
                             RemoveItemV1(inv, store);
                             break;
                         case(4):// Save Data
-                            WriteShopToFile(storePath, store.GOLDAMOUNT);
+                            WriteShopToFile(storePath, store);
                             WriteItemsToFile(storeItemsPath, inv);
                             break;
                         case(5):// Load Data
