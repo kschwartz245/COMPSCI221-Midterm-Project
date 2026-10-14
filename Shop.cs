@@ -17,15 +17,15 @@ namespace COMPSCI221_Midterm
 
         static void PrintItems(Item[] arr)
         {
-            for(int i = 1; i<arr.Length+1; i++)
+            for(int i = 0; i<arr.Length; i++)
             {
-                if (arr[i-1] == null)
+                if (arr[i] == null)
                 {
                     Console.WriteLine($"{i}. No Item!");
                 }
                 else
                 {
-                    Console.WriteLine($"{i}. {arr[i-1].ToString()}");
+                    Console.WriteLine($"{i}. {arr[i].ToString()}");
                 }
             }
             Console.WriteLine("\n");
@@ -130,70 +130,76 @@ namespace COMPSCI221_Midterm
             return -1;
         }
 
-        static void AddItemV1(Item[] roster, Item[] inv, int gold) // Calls RoomInStore and places empty item in an empty slot
+        static void AddItemV1(Item[] roster, Item[] inv, Store store) // Calls RoomInStore and places empty item in an empty slot
         {
-            int pos = RoomInStore(inv);
-            if (pos != -1)
+            int choice = 0;
+            while (choice != -1)
             {
-                Console.WriteLine("Select an Item to Add: \n");
-                PrintItems(roster);
-                string input = Console.ReadLine();
-                int choice;
-                bool isValid = int.TryParse(input, out choice);
-                if (!isValid || choice > roster.Length) 
+                int pos = RoomInStore(inv);
+                if (pos != -1)
                 {
-                    Console.WriteLine("Input not valid! Numbers Only and Only Within the Choices Provided");
+                    Console.WriteLine("\nSelect an Item to Add, Select -1 to Exit: \n");
+                    PrintItems(roster);
+                    string input = Console.ReadLine();
+                    bool isValid = int.TryParse(input, out choice);
+                    if (!isValid || choice > roster.Length-1 || choice == -1)
+                    {
+                        Console.WriteLine("Input not valid! Numbers Only and Only Within the Choices Provided");
+                    }
+                    else
+                    {
+                        if (roster[choice].Price < store.GOLDAMOUNT)
+                        {
+                            store.GOLDAMOUNT -= roster[choice].Price;
+                            inv[pos] = roster[choice];
+                            Console.WriteLine("Item Bought");
+                        }
+                        else
+                        {
+                            Console.WriteLine("Not Enough Gold");
+                        }
+                    }
                 }
                 else
                 {
-                    if(roster[choice].Price > gold) {
-                        gold = gold - roster[choice].Price;
-                        inv[pos] = roster[choice];
-                        Console.WriteLine("Item Bought");
-                    } else {
-                        Console.WriteLine("Not Enough Gold");
-                    }  
+                    Console.WriteLine("Store is Full!\n");
                 }
-            }
-            else
-            {
-                Console.WriteLine("Store is Full!\n");
             }
         }
 
-        static void RemoveItemV1(Item[] inv, int gold)
+        static void RemoveItemV1(Item[] inv, Store store)
         {
             string input;
-            int choice = -1;
-            while (choice != 0)
+            int choice = 0;
+            while (choice != -1)
             {
-                Console.WriteLine("\nSelect and Item to Remove, Select 0 to Exit: \n");
+                Console.WriteLine("\nSelect an Item to Remove, Select 0 to Exit: \n");
                 PrintItems(inv);
                 input = Console.ReadLine();
                 bool isValid = int.TryParse(input, out choice);
-                if (!isValid || choice > inv.Length || choice == 0)
+                if (!isValid || choice > inv.Length - 1 || choice == -1)
                 {
                     Console.WriteLine("Input not valid! Numbers from List Only");
                 }
                 else
                 {
-                    if (inv[choice-1] != null)
+                    if (inv[choice] != null)
                     {
-                        gold = gold + inv[choice - 1].Price;
-                        inv[choice-1] = null;
+                        store.GOLDAMOUNT += inv[choice].Price;
+                        inv[choice] = null;
                         Console.WriteLine("Item Sold");
                     }
                     else
                     {
                         Console.WriteLine("No Item Selected!");
                     }
-
                 }
             }
         }
 
         static void Main()
         {
+            //Starting Gold
             int gold = 200;
             //string for path of items
             string rosterPath = "Roster.csv";
@@ -202,16 +208,15 @@ namespace COMPSCI221_Midterm
             //string for path of item savedata
             string storeItemsPath = "Inventory.csv";
 
-            //need list of items imported to refer to i.e. ReadItemsFromFile()\
             Item[] roster = new Item[GetLineCount(rosterPath)];
             roster = ReadItemsFromFile(rosterPath);
             Item[] inv = new Item[20];// Array of Item Objects limited to store capacity
-
+            Store store = new Store(gold, 20);
 
             bool exit = false;
             int choice;
             string input;
-            PrintMenu(gold);
+            PrintMenu(store.GOLDAMOUNT);
             while (!exit)
             {
                 input = Console.ReadLine();
@@ -231,25 +236,22 @@ namespace COMPSCI221_Midterm
                             exit = true;
                             break;
                         case (2):// Add Item
-                            AddItemV1(roster, inv, gold);
+                            AddItemV1(roster, inv, store);
                             break;
                         case (3):// Remove Item
-                            RemoveItemV1(inv, gold);
+                            RemoveItemV1(inv, store);
                             break;
-                        case(4):// Print Items
-                            PrintItems(inv);
-                            break;
-                        case(5):// Save Data
-                            WriteShopToFile(storePath, gold);
+                        case(4):// Save Data
+                            WriteShopToFile(storePath, store.GOLDAMOUNT);
                             WriteItemsToFile(storeItemsPath, inv);
                             break;
-                        case (6):// Load Data
-
+                        case(5):// Load Data
+                            
                             break;
                     }
                 }
                 Console.Clear();
-                PrintMenu(gold);
+                PrintMenu(store.GOLDAMOUNT);
             }
         }
     }
