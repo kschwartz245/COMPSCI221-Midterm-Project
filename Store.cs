@@ -12,8 +12,8 @@ namespace COMPSCI221_Midterm
         public int StoreInventory;
         public Store(int GoldAmount, int StoreInventory)
         {
-            GoldAmount = GOLDAMOUNT;
-            StoreInventory = STOREINVENTORY;
+            this.GoldAmount = GoldAmount;
+            this.StoreInventory = StoreInventory;
         }
 
         public int GOLDAMOUNT
