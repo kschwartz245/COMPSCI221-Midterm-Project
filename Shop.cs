@@ -12,7 +12,7 @@ namespace COMPSCI221_Midterm
         static void PrintMenu(int gold)
         {
             Console.WriteLine($"Adventure Shop Sim:\nCurrent Gold: {gold}\n");
-            Console.WriteLine("Select an Option:\n1. Exit Program\n2. Add Item\n3. Remove Item\n4. Save Data \n5. Load Data");
+            Console.WriteLine("Select an Option:\n1. Exit Program\n2. Add Item\n3. Remove Item\n4. Print Items \n5. Save Data \n6. Load Data");
         }
 
         static void PrintItems(Item[] arr)
@@ -29,6 +29,14 @@ namespace COMPSCI221_Midterm
                 }
             }
             Console.WriteLine("\n");
+        }
+
+        static void ListItems(Item[] arr)
+        {
+                Console.WriteLine("\nPress Enter Button to Return to Menu\n");
+                PrintItems(arr);
+                Console.ReadLine();
+                Console.WriteLine("\n");
         }
 
         static int GetLineCount(string path)
@@ -50,7 +58,7 @@ namespace COMPSCI221_Midterm
             return count;
         }
 
-        static string ReadHeaderFromFile(string path)
+        static Store ReadStoreFromFile(string path)
         {
             if (!File.Exists(path))
             {
@@ -58,7 +66,12 @@ namespace COMPSCI221_Midterm
             }
             using StreamReader reader = new StreamReader(path);
             string line = reader.ReadLine();
-            return line;
+            string[] col = line.Split(',');
+            int gold = int.Parse(col[0]);
+            //int inv = int.Parse(col[1]);
+            int inv = 20;
+            Store store = new Store(gold, inv);
+            return store;
         }
 
         static Item[] ReadItemsFromFile(string path)
@@ -68,9 +81,8 @@ namespace COMPSCI221_Midterm
                 throw new FileNotFoundException("Error finding file");
             }
 
-            Item[] items = new Item[GetLineCount(path) - 1];
+            Item[] items = new Item[GetLineCount(path)];
             using StreamReader reader = new StreamReader(path);
-            reader.ReadLine();
 
             for (int i = 0; i < items.Length; i++)
             {
@@ -96,7 +108,7 @@ namespace COMPSCI221_Midterm
         static void WriteItemsToFile(string path, Item[] inv)
         {
             using StreamWriter writer = new StreamWriter(path, false);
-            for (int i = 0;i < inv.Length-1;i++)
+            for (int i = 0;i < inv.Length;i++)
             {
                 if (inv[i] != null)
                 {
@@ -104,21 +116,6 @@ namespace COMPSCI221_Midterm
                     writer.WriteLine(line);
                 }
             }
-        }
-        //need readfile and writefile for savedata
-        //Gold amount and array of shop parsed in and out of csv file
-
-        static int ItemCount(Item[] inv) // Counts Items currently in inventory and returns an Int
-        {
-            int count = 0;
-            for (int i = 0; i < inv.Length; i++)
-            {
-                if (inv[i] != null)
-                {
-                    count++;
-                }
-            }
-            return count;
         }
         
         static int RoomInStore(Item[] inv) // Searches array passed in for first empty space, returning position if found or -1 if full
@@ -177,7 +174,7 @@ namespace COMPSCI221_Midterm
             int choice = 0;
             while (choice != -1)
             {
-                Console.WriteLine("\nSelect an Item to Remove, Select 0 to Exit: \n");
+                Console.WriteLine("\nSelect an Item to Remove, Select -1 to Exit: \n");
                 PrintItems(inv);
                 input = Console.ReadLine();
                 bool isValid = int.TryParse(input, out choice);
@@ -245,12 +242,16 @@ namespace COMPSCI221_Midterm
                         case (3):// Remove Item
                             RemoveItemV1(inv, store);
                             break;
-                        case(4):// Save Data
+                        case (4)://Print Items
+                            ListItems(inv);
+                            break;
+                        case(5):// Save Data
                             WriteShopToFile(storePath, store);
                             WriteItemsToFile(storeItemsPath, inv);
                             break;
-                        case(5):// Load Data
-                            
+                        case(6):// Load Data
+                            store = ReadStoreFromFile(storePath);
+                            inv = ReadItemsFromFile(storeItemsPath);
                             break;
                     }
                 }
