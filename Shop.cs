@@ -58,7 +58,7 @@ namespace COMPSCI221_Midterm
             return count;
         }
 
-        static Store ReadStoreFromFile(string path)
+        static Store ReadStoreFromFile(string path, Item[] inv)
         {
             if (!File.Exists(path))
             {
@@ -68,9 +68,8 @@ namespace COMPSCI221_Midterm
             string line = reader.ReadLine();
             string[] col = line.Split(',');
             int gold = int.Parse(col[0]);
-            //int inv = int.Parse(col[1]);
-            int inv = 20;
-            Store store = new Store(gold, inv);
+            int size = int.Parse(col[1]);
+            Store store = new Store(gold, size, inv);
             return store;
         }
 
@@ -92,8 +91,10 @@ namespace COMPSCI221_Midterm
                 //Parse data here for item file
                 string name = col[0];
                 int price = int.Parse(col[1]);
-
-                items[i] = new Item(name, price);
+                if (name != "null")
+                    items[i] = new Item(name, price);
+                else
+                    items[i] = null;
             }
             return items;
         }
@@ -101,7 +102,7 @@ namespace COMPSCI221_Midterm
         static void WriteShopToFile(string path, Store store)
         {
             using StreamWriter writer = new StreamWriter(path, false);
-            string line = $"{store.GOLDAMOUNT}";
+            string line = $"{store.GOLDAMOUNT},{store.STORESIZE}";
             writer.WriteLine(line);
         }
 
@@ -115,6 +116,12 @@ namespace COMPSCI221_Midterm
                     string line = string.Join(",", inv[i].Name, inv[i].Price);
                     writer.WriteLine(line);
                 }
+                else
+                {
+                    string line = string.Join(",", "null", 0);
+                    writer.WriteLine(line);
+                }
+
             }
         }
         
@@ -168,26 +175,26 @@ namespace COMPSCI221_Midterm
             }
         }
 
-        static void RemoveItemV1(Item[] inv, Store store)
+        static void RemoveItemV1(Store store)
         {
             string input;
             int choice = 0;
             while (choice != -1)
             {
                 Console.WriteLine("\nSelect an Item to Remove, Select -1 to Exit: \n");
-                PrintItems(inv);
+                PrintItems(store.StoreInventory);
                 input = Console.ReadLine();
                 bool isValid = int.TryParse(input, out choice);
-                if (!isValid || choice > inv.Length - 1 || choice == -1)
+                if (!isValid || choice > store.StoreInventory.Length - 1 || choice == -1)
                 {
                     Console.WriteLine("Input not valid! Numbers from List Only");
                 }
                 else
                 {
-                    if (inv[choice] != null)
+                    if (store.StoreInventory[choice] != null)
                     {
-                        store.GOLDAMOUNT += inv[choice].Price;
-                        inv[choice] = null;
+                        store.GOLDAMOUNT += store.StoreInventory[choice].Price;
+                        store.StoreInventory[choice] = null;
                         Console.WriteLine("Item Sold");
                     }
                     else
@@ -200,6 +207,8 @@ namespace COMPSCI221_Midterm
 
         static void Main()
         {
+            //Starting Size
+            int size = 20;
             //Starting Gold
             int gold = 200;
             //string for path of items
@@ -211,8 +220,8 @@ namespace COMPSCI221_Midterm
 
             Item[] roster = new Item[GetLineCount(rosterPath)];
             roster = ReadItemsFromFile(rosterPath);
-            Item[] inv = new Item[20];// Array of Item Objects limited to store capacity
-            Store store = new Store(gold, 20);
+            Item[] inv = new Item[size];// Array of Item Objects limited to store capacity
+            Store store = new Store(gold, size, inv);
 
             bool exit = false;
             int choice;
@@ -237,21 +246,21 @@ namespace COMPSCI221_Midterm
                             exit = true;
                             break;
                         case (2):// Add Item
-                            AddItemV1(roster, inv, store);
+                            AddItemV1(roster, store.StoreInventory, store);
                             break;
                         case (3):// Remove Item
-                            RemoveItemV1(inv, store);
+                            RemoveItemV1(store);
                             break;
                         case (4)://Print Items
                             ListItems(inv);
                             break;
                         case(5):// Save Data
-                            WriteShopToFile(storePath, store);
                             WriteItemsToFile(storeItemsPath, inv);
+                            WriteShopToFile(storePath, store);
                             break;
                         case(6):// Load Data
-                            store = ReadStoreFromFile(storePath);
                             inv = ReadItemsFromFile(storeItemsPath);
+                            store = ReadStoreFromFile(storePath, inv);
                             break;
                     }
                 }
