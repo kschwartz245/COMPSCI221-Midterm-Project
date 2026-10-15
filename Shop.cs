@@ -137,12 +137,12 @@ namespace COMPSCI221_Midterm
             return -1;
         }
 
-        static void AddItemV1(Item[] roster, Item[] inv, Store store) // Calls RoomInStore and places empty item in an empty slot
+        static void AddItemV1(Item[] roster, Store store) // Calls RoomInStore and places empty item in an empty slot
         {
             int choice = 0;
             while (choice != -1)
             {
-                int pos = RoomInStore(inv);
+                int pos = RoomInStore(store.StoreInventory);
                 if (pos != -1)
                 {
                     Console.WriteLine("\nSelect an Item to Add, Select -1 to Exit: \n");
@@ -158,7 +158,7 @@ namespace COMPSCI221_Midterm
                         if (roster[choice].Price < store.GOLDAMOUNT)
                         {
                             store.GOLDAMOUNT -= roster[choice].Price;
-                            inv[pos] = roster[choice];
+                            store.StoreInventory[pos] = roster[choice];
                             Console.WriteLine("Item Bought");
                         }
                         else
@@ -246,16 +246,16 @@ namespace COMPSCI221_Midterm
                             exit = true;
                             break;
                         case (2):// Add Item
-                            AddItemV1(roster, store.StoreInventory, store);
+                            AddItemV1(roster, store);
                             break;
                         case (3):// Remove Item
                             RemoveItemV1(store);
                             break;
                         case (4)://Print Items
-                            ListItems(inv);
+                            ListItems(store.StoreInventory);
                             break;
                         case(5):// Save Data
-                            WriteItemsToFile(storeItemsPath, inv);
+                            WriteItemsToFile(storeItemsPath, store.StoreInventory);
                             WriteShopToFile(storePath, store);
                             break;
                         case(6):// Load Data
