@@ -8,6 +8,8 @@ namespace COMPSCI221_Midterm
 {
     public class Store
     {
+        public int DailyInteractions;
+        public int MaxInteractions;
         private int GoldAmount;
         public int StoreInventory;
         public Store(int GoldAmount, int StoreInventory)
