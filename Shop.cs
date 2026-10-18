@@ -217,7 +217,20 @@ namespace COMPSCI221_Midterm
                         case (6):// Load Data
 
                             break;
+                        case (7):
+                    PrintPlayerInventory(playerInventory);
+                          
+                            break;
+                        case (8):
+                   Console.WriteLine("1. Buy from Store\n2. Sell to Store");
+                   string sub = Console.ReadLine();
+                  if (sub == "1") PlayerBuy(store.StoreInventory, playerInventory, store);
+                  else if (sub == "2") PlayerSell(playerInventory, store);
+                           break;
+
                     }
+
+                    Item[] playerInventory = new Item[20];
                 }
                 Console.Clear();
                 PrintMenu(gold);
