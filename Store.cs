@@ -10,7 +10,7 @@ namespace COMPSCI221_Midterm
     {
         public int DailyInteractions;
         public int MaxInteractions;
-        
+        public int DailyRent = 50;
         private int GoldAmount;
         public int StoreInventory;
          public Store(int gold, int size, Item[] inv, int maxInteractions, int dailyRent)
