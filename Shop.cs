@@ -191,6 +191,66 @@ namespace COMPSCI221_Midterm
                 PrintItems(inv);
                 Console.ReadLine();
         }
+                
+             static void PlayerBuy(Item[] storeInv, Item[] playerInv, Store store)
+       {
+            Console.WriteLine("Select item to buy:");
+            PrintItems(storeInv);
+
+           string input = Console.ReadLine();
+          if (!int.TryParse(input, out int choice)) return;
+
+         if (storeInv[choice] != null)
+    {
+        int pos = RoomInStore(playerInv);
+        if (pos == -1)
+   {
+            Console.WriteLine("Your inventory is full!");
+            return;
+    }
+
+        if (store.GOLDAMOUNT >= storeInv[choice].Price)
+   {
+            store.GOLDAMOUNT -= storeInv[choice].Price;
+            playerInv[pos] = storeInv[choice];
+            storeInv[choice] = null;
+            Console.WriteLine("Item purchased at base price.");
+        }
+        else
+        {
+            Console.WriteLine("Not enough gold.");
+        }
+    }
+
+                 static void PlayerSell(Item[] playerInv, Store store)
+   {
+      Console.WriteLine("Select item to sell:");
+      PrintItems(playerInv);
+
+      string input = Console.ReadLine();
+      if (!int.TryParse(input, out int choice)) return;
+
+      if (playerInv[choice] != null)
+ {
+        store.GOLDAMOUNT += playerInv[choice].Price;
+        playerInv[choice] = null;
+        Console.WriteLine("Item sold at base price.");
+    }
+}
+
+      static void ApplyDailyRent(Store store)
+{
+    Console.WriteLine($"Daily rent of {store.DailyRent} gold is due.");
+
+    store.GOLDAMOUNT -= store.DailyRent;
+
+    if (store.GOLDAMOUNT < 0)
+    {
+        Console.WriteLine("\nYou cannot pay rent... GAME OVER!");
+        return 0;
+    }
+}
+
 
    }
         
