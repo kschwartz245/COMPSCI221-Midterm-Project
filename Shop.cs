@@ -9,10 +9,11 @@ namespace COMPSCI221_Midterm
 {
     public class Shop
     {
-        static void PrintMenu(int gold)
+        static void PrintMenu(int gold, string name)
         {
+            Console.WriteLine($"{name}:");
             Console.WriteLine($"Adventure Shop Sim:\nCurrent Gold: {gold}\n");
-            Console.WriteLine("Select an Option:\n1. Exit Program\n2. Add Item\n3. Remove Item\n4. Print Items \n5. Save Data \n6. Load Data");
+            Console.WriteLine("Select an Option:\n1. Exit Program\n2. Add Item\n3. Remove Item\n4. Print Items \n5. Save Data \n6. Load Data \n7. Expedition \n8. Settings");
         }
 
         static void PrintItems(Item[] arr)
@@ -205,6 +206,88 @@ namespace COMPSCI221_Midterm
             }
         }
 
+        static void QuestingV1(Store store, Item[] roster)
+        {
+            string input;
+            int choice;
+            Console.WriteLine("\n Would you like to send an adventurer out for 200 gold?, Select 0 to Exit or 1 to send out: \n");
+            input = Console.ReadLine();
+            bool isValid = int.TryParse(input, out choice);
+            if (isValid == true) {
+                new Exception("Invalid option");
+            }
+            else if (choice == 0) {
+                return;
+            } else if (choice == 1) {
+                if(store.GOLDAMOUNT > 200) {
+                    new Exception("Not enough gold to send an adventurer out");
+                } else {
+                    int pos = RoomInStore(store.StoreInventory);
+                    if (pos == -1) {
+                        new Exception("No space for new items");
+                    } 
+                    store.GOLDAMOUNT = store.GOLDAMOUNT - 200;
+                    Random rnd = new Random();
+                    int rand = rnd.Next(0,6);
+                    if (rand == 1) {
+                        Item fill = new Item("Wooden Sword", 20);
+                        roster[pos] = fill;
+                        Console.WriteLine("Your adventurer found a Wooden Sword (20) gold");
+                    }
+                    else if (rand == 2) {
+                        Item fill = new Item("Jar of dirt", 2);
+                        roster[pos] = fill;
+                        Console.WriteLine("Your adventurer found a Jar of dirt (2) gold");
+                    }
+                    else if (rand == 3) {
+                        Item fill = new Item("Iron Sword", 250);
+                        roster[pos] = fill;
+                        Console.WriteLine("Your adventurer found a Iron Sword (250) gold");
+                    }
+                    else if (rand == 4) {
+                        Item fill = new Item("Magic Wand", 300);
+                        roster[pos] = fill;
+                        Console.WriteLine("Your adventurer found a Magic Wand (300) gold");
+                    }
+                    else if (rand == 5) {
+                        Item fill = new Item("Dragon Scale", 500);
+                        roster[pos] = fill;
+                        Console.WriteLine("Your adventurer found a Dragon Scale (500) gold");
+                    }
+                    else {
+                        Item fill = new Item("Giant Spoon", 750);
+                        roster[pos] = fill;
+                        Console.WriteLine("Your adventurer found a Giant Spoon (750) gold");
+                    }
+                }
+            }
+        }
+
+        static void Settings(Store store, string name) {
+            Console.WriteLine("What would you like to change: \n1. Store's Name \n 2. Starting Gold \n0. Exit");
+            string input;
+            int choice;
+            input = Console.ReadLine();
+            bool isValid = int.TryParse(input, out choice);
+            if (isValid == false) {
+                new Exception("Invalid Option");
+            } else {
+                if (choice == 0) {
+                    return;
+                }
+                else if (choice == 1) {
+                    Console.WriteLine("What do you want the store's name to be changed to?");
+                    input = Console.ReadLine();
+                    name = input;
+                }
+                else {
+                    Console.WriteLine("How much gold do you want to start with?");
+                    input = Console.ReadLine();
+                    store.GOLDAMOUNT = int.Parse(input);
+                }
+            }
+        }
+
         static void Main()
         {
             //Starting Size
@@ -217,6 +300,8 @@ namespace COMPSCI221_Midterm
             string storePath = "Store.csv";
             //string for path of item savedata
             string storeItemsPath = "Inventory.csv";
+            //string for store name
+            string name = "Average Store";
 
             Item[] roster = new Item[GetLineCount(rosterPath)];
             roster = ReadItemsFromFile(rosterPath);
@@ -226,7 +311,7 @@ namespace COMPSCI221_Midterm
             bool exit = false;
             int choice;
             string input;
-            PrintMenu(store.GOLDAMOUNT);
+            PrintMenu(store.GOLDAMOUNT, name);
             while (!exit)
             {
                 input = Console.ReadLine();
@@ -262,10 +347,16 @@ namespace COMPSCI221_Midterm
                             inv = ReadItemsFromFile(storeItemsPath);
                             store = ReadStoreFromFile(storePath, inv);
                             break;
+                        case (7):// Questing
+                            QuestingV1(store, roster);
+                            break;
+                        case (8)://Settings
+                            Settings(store, name);
+                            break;
                     }
                 }
                 Console.Clear();
-                PrintMenu(store.GOLDAMOUNT);
+                PrintMenu(store.GOLDAMOUNT, name);
             }
         }
     }

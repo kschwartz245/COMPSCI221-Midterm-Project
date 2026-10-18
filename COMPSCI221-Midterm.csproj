@@ -51,6 +51,12 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+    <None Include="bin\Debug\Inventory.csv.xlsx" />
+    <None Include="bin\Debug\Roster.csv.xlsx" />
+    <None Include="bin\Debug\Store.csv.xlsx" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="obj\Debug\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
