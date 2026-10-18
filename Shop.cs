@@ -137,6 +137,10 @@ namespace COMPSCI221_Midterm
             {
                 Console.WriteLine("Store is Full!\n");
             }
+
+            store.DailyInteractions++;
+            CheckDayEnd(store);
+
         }
 
         static void RemoveItemV1(Item[] inv)
@@ -164,9 +168,32 @@ namespace COMPSCI221_Midterm
                         Console.WriteLine("No Item Selected!");
                     }
 
+                    store.DailyInteractions++;
+                    CheckDayEnd(store);
+
                 }
-            }
+
+                static void CheckDayEnd(Store store)
+            {
+                 if (store.DailyInteractions = store.MaxInteractions)
+            {
+                 Console.WriteLine("\nThe day has ended!");
+                store.DailyInteractions = 0; // reset for next day
+                ApplyDailyRent(store);
+               Console.WriteLine("Press Enter to continue...");
+               Console.ReadLine();
+          }
+      }
+
+                static void PrintPlayerInventory(Item[] inv)
+            {
+                Console.WriteLine("\nPlayer Inventory:");
+                PrintItems(inv);
+                Console.ReadLine();
         }
+
+   }
+        
 
         static void Main()
         {
@@ -178,6 +205,7 @@ namespace COMPSCI221_Midterm
             //need list of items imported to refer to i.e. ReadItemsFromFile()
             Item[] roster = new Item[0]; // fake array of items to compile code !!! Replace with Imported Item File Array !!!
             Item[] inv = new Item[20];// Array of Item Objects limited to store capacity
+            Item[] playerInventory = new Item[20];
 
 
             bool exit = false;
