@@ -10,13 +10,19 @@ namespace COMPSCI221_Midterm
     {
         public int DailyInteractions;
         public int MaxInteractions;
+        
         private int GoldAmount;
         public int StoreInventory;
-        public Store(int GoldAmount, int StoreInventory)
+         public Store(int gold, int size, Item[] inv, int maxInteractions, int dailyRent)
         {
             GoldAmount = GOLDAMOUNT;
             StoreInventory = STOREINVENTORY;
+
+            DailyInteractions = DAILYINTERACTIONS;    
+            MaxInteractions = MAXINTERACTIONS;
+            DailyRent = DAILYRENT;
         }
+
 
         public int GOLDAMOUNT
         {
@@ -42,6 +48,29 @@ namespace COMPSCI221_Midterm
                 }
             }
 
+        Public int MAXINTERACTIONS
+        {
+           get => MaxInteractions
+            set
+           {
+               if (MaxInteractions < 0)
+               {
+                   throw new Exception("There cannot be a negative amount of max interactions")
+               }
+                   MaxInteractions = 7;
+           }
+
+        Public int DAILYINTERACTIONS
+        {
+            get => DailyInteractions
+            set
+            {
+                if (DailyInteractions < 0)
+                {
+                    throw new Exception("There cannot be a negative amount of store interactions")
+                }
+                    DailyInteractions = 0;
+            }
         }
     }
 }
