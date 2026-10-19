@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -9,10 +10,9 @@ namespace COMPSCI221_Midterm
 {
     public class Shop
     {
-        static void PrintMenu(int gold, string name)
+        static void PrintMenu(Store store, string name)
         {
-            Console.WriteLine($"{name}:");
-            Console.WriteLine($"Adventure Shop Sim:\nCurrent Gold: {gold}\n");
+            Console.WriteLine($"{name}: \nCurrent Gold: {store.GOLDAMOUNT} \nCurrent Save: {store.SAVE}");
             Console.WriteLine("Select an Option:\n1. Exit Program\n2. Add Item\n3. Remove Item\n4. Print Items \n5. Save Data \n6. Load Data \n7. Expedition \n8. Settings");
         }
 
@@ -70,7 +70,8 @@ namespace COMPSCI221_Midterm
             string[] col = line.Split(',');
             int gold = int.Parse(col[0]);
             int size = int.Parse(col[1]);
-            Store store = new Store(gold, size, inv);
+            int save = int.Parse(col[2]);
+            Store store = new Store(gold, size, inv, save);
             return store;
         }
 
@@ -103,7 +104,7 @@ namespace COMPSCI221_Midterm
         static void WriteShopToFile(string path, Store store)
         {
             using StreamWriter writer = new StreamWriter(path, false);
-            string line = $"{store.GOLDAMOUNT},{store.STORESIZE}";
+            string line = $"{store.GOLDAMOUNT},{store.STORESIZE},{store.SAVE}";
             writer.WriteLine(line);
         }
 
@@ -264,7 +265,7 @@ namespace COMPSCI221_Midterm
         }
 
         static void Settings(Store store, string name) {
-            Console.WriteLine("What would you like to change: \n1. Store's Name \n 2. Starting Gold \n0. Exit");
+            Console.WriteLine("What would you like to change: \n1. Store's Name \n2. Starting Gold \n3. Current Save Slot \n0. Exit");
             string input;
             int choice;
             input = Console.ReadLine();
@@ -272,24 +273,44 @@ namespace COMPSCI221_Midterm
             if (isValid == false) {
                 new Exception("Invalid Option");
             } else {
-                if (choice == 0) {
+                if (choice == 0)
+                {
                     return;
                 }
-                else if (choice == 1) {
+                else if (choice == 1)
+                {
                     Console.WriteLine("What do you want the store's name to be changed to?");
                     input = Console.ReadLine();
                     name = input;
                 }
-                else {
+                else if (choice == 2)
+                {
                     Console.WriteLine("How much gold do you want to start with?");
                     input = Console.ReadLine();
                     store.GOLDAMOUNT = int.Parse(input);
+                }
+                else if (choice == 3)
+                {
+                    Console.WriteLine("Which Save Slot to save to? 1 / 2 / 3 ?");
+                    input = Console.ReadLine();
+                    isValid = int.TryParse(input, out choice);
+                    if (isValid == false)
+                    {
+                        new Exception("Invalid Option");
+                    }
+                    else
+                    {
+                        if (choice == 1 || choice == 2 || choice == 3)
+                            store.SAVE = int.Parse(input);
+                    }
                 }
             }
         }
 
         static void Main()
         {
+            //Starting Save Slot
+            int saveSlot = 1; // !!! Can only be 1 2 or 3 !!!
             //Starting Size
             int size = 20;
             //Starting Gold
@@ -297,21 +318,21 @@ namespace COMPSCI221_Midterm
             //string for path of items
             string rosterPath = "Roster.csv";
             //string for path of basic store savedata
-            string storePath = "Store.csv";
+            string storePath = "Store.csv" + saveSlot;
             //string for path of item savedata
-            string storeItemsPath = "Inventory.csv";
+            string storeItemsPath = "Inventory.csv" + saveSlot;
             //string for store name
             string name = "Average Store";
 
             Item[] roster = new Item[GetLineCount(rosterPath)];
             roster = ReadItemsFromFile(rosterPath);
             Item[] inv = new Item[size];// Array of Item Objects limited to store capacity
-            Store store = new Store(gold, size, inv);
+            Store store = new Store(gold, size, inv, 1);
 
             bool exit = false;
             int choice;
             string input;
-            PrintMenu(store.GOLDAMOUNT, name);
+            PrintMenu(store, name);
             while (!exit)
             {
                 input = Console.ReadLine();
@@ -352,11 +373,13 @@ namespace COMPSCI221_Midterm
                             break;
                         case (8)://Settings
                             Settings(store, name);
+                            storePath = "Store" + store.SAVE + ".csv";
+                            storeItemsPath = "Inventory" + store.SAVE + ".csv";
                             break;
                     }
                 }
                 Console.Clear();
-                PrintMenu(store.GOLDAMOUNT, name);
+                PrintMenu(store, name);
             }
         }
     }
